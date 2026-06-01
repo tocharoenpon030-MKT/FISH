@@ -69,6 +69,27 @@ body {
   white-space: nowrap;
   flex-shrink: 0;
 }
+.data-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #1a73e8;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s, box-shadow 0.15s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+.data-btn:hover { background: #1558b0; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+.data-btn svg { flex-shrink: 0; }
 
 .main { max-width: 900px; margin: 0 auto; padding: 16px; }
 
@@ -268,6 +289,10 @@ tr.active-row td:first-child { color: var(--green) !important; }
     <p>ระบบ Biofloc · รอบ 4 เดือน</p>
   </div>
   <div class="badge" id="headerBadge">ปลาดุก</div>
+  <a class="data-btn" href="https://docs.google.com/spreadsheets/d/1JcQkzzEDYJz_2wbrJKtWUE3IDQ5WnOMLgn66EXSM_Ho/edit?usp=sharing" target="_blank" rel="noopener">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+    ดู DATA
+  </a>
 </div>
 
 <div class="main">
