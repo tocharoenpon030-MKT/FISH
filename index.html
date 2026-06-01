@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เครื่องคำนวณกำไร — เลี้ยงปลา Biofloc</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8f9fa;
+  --bg3: #f0f2f5;
+  --border: #d0d7de;
+  --border2: #b0b8c4;
+  --green: #1a7f37;
+  --green-bg: #dafbe1;
+  --green-border: #82e09a;
+  --red: #cf222e;
+  --red-bg: #ffebe9;
+  --yellow: #9a6700;
+  --yellow-bg: #fff8c5;
+  --yellow-border: #d4a72c;
+  --blue: #0969da;
+  --text: #1f2328;
+  --text2: #656d76;
+  --text3: #8c959f;
+  --accent: #1a7f37;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #f0f2f5;
+  color: var(--text);
+  font-family: 'Sarabun', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.header {
+  background: var(--bg);
+  border-bottom: 2px solid var(--border);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.header-icon {
+  width: 44px; height: 44px;
+  background: var(--green-bg);
+  border: 2px solid var(--green-border);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.header h1 { font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.header p  { font-size: 12px; color: var(--text2); }
+.badge {
+  margin-left: auto;
+  background: var(--green-bg);
+  color: var(--green);
+  border: 1.5px solid var(--green-border);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.main { max-width: 900px; margin: 0 auto; padding: 16px; }
+
+.panel {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.panel-header {
+  padding: 12px 16px;
+  border-bottom: 1.5px solid var(--border);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--bg2);
+  display: flex; align-items: center; gap: 8px;
+}
+.panel-header .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green); flex-shrink: 0;
+}
+.panel-body { padding: 16px; }
+
+/* fish toggle */
+.fish-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.fish-btn {
+  padding: 14px 10px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: var(--bg3);
+  color: var(--text2);
+  font-family: 'Sarabun', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+.fish-btn:hover { border-color: var(--green); color: var(--text); }
+.fish-btn.active {
+  background: var(--green-bg);
+  border-color: var(--green);
+  color: var(--green);
+}
+.fish-btn .emoji { font-size: 24px; display: block; margin-bottom: 5px; }
+
+/* sliders */
+.slider-group { margin-bottom: 18px; }
+.slider-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.slider-label span { font-size: 15px; color: var(--text); font-weight: 500; }
+.slider-label .val {
+  font-family: 'Space Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--yellow);
+  background: var(--yellow-bg);
+  border: 1px solid var(--yellow-border);
+  border-radius: 6px;
+  padding: 2px 8px;
+}
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%; height: 6px;
+  background: var(--bg3);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  border: 1px solid var(--border);
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--green);
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px var(--green);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+input[type=range]::-moz-range-thumb {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--green); border: 3px solid #fff;
+  box-shadow: 0 0 0 2px var(--green); cursor: pointer;
+}
+.range-bounds { display: flex; justify-content: space-between; margin-top: 4px; }
+.range-bounds span { font-size: 11px; color: var(--text3); font-family: 'Space Mono', monospace; }
+
+.divider { border: none; border-top: 1.5px solid var(--border); margin: 18px 0; }
+
+/* stat cards */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.stat-card {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.stat-card .stat-label { font-size: 12px; color: var(--text2); font-weight: 500; margin-bottom: 4px; }
+.stat-card .stat-val { font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 700; color: var(--text); }
+.stat-card .stat-unit { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.stat-card.green { border-color: var(--green-border); background: var(--green-bg); }
+.stat-card.green .stat-val { color: var(--green); }
+.stat-card.red { border-color: #f7a9aa; background: var(--red-bg); }
+.stat-card.red .stat-val { color: var(--red); }
+.stat-card.yellow { border-color: var(--yellow-border); background: var(--yellow-bg); }
+.stat-card.yellow .stat-val { color: var(--yellow); }
+
+/* cost rows */
+.cost-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 8px;
+}
+.cost-row:last-child { border-bottom: none; }
+.cost-label { color: var(--text2); font-size: 14px; display: flex; align-items: center; gap: 8px; flex: 1; }
+.cost-label .icon { font-size: 16px; flex-shrink: 0; }
+.cost-amt { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--text); font-weight: 600; white-space: nowrap; }
+.cost-row.total-row { padding-top: 12px; margin-top: 4px; }
+.cost-row.total-row .cost-label { color: var(--text); font-weight: 700; font-size: 15px; }
+.cost-row.total-row .cost-amt { color: var(--yellow); font-weight: 700; font-size: 16px; }
+
+/* table */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 360px; }
+th {
+  text-align: right; padding: 11px 12px;
+  background: var(--bg2);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 13px;
+  border-bottom: 2px solid var(--border2);
+  white-space: nowrap;
+}
+th:first-child { text-align: center; }
+td {
+  text-align: right; padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--text2);
+}
+td:first-child { text-align: center; font-weight: 700; color: var(--text); font-size: 15px; }
+tr:hover td { background: var(--bg2); }
+tr.active-row td { background: var(--green-bg) !important; color: var(--green) !important; font-weight: 600; }
+tr.active-row td:first-child { color: var(--green) !important; }
+.profit-pos { color: var(--green) !important; font-weight: 700; }
+.profit-neg { color: var(--red) !important; font-weight: 700; }
+.check { color: var(--green); }
+
+/* target / warn */
+.target-box {
+  background: var(--green-bg);
+  border: 2px solid var(--green-border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+.target-box h3 { font-size: 14px; color: var(--green); font-weight: 700; margin-bottom: 12px; }
+.target-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.target-item { text-align: center; }
+.target-item .t-label { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+.target-item .t-val { font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700; color: var(--green); }
+
+.warn-box {
+  background: var(--red-bg);
+  border: 2px solid #f7a9aa;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  color: #6e1117;
+  line-height: 1.7;
+}
+.warn-box strong { color: var(--red); }
+
+/* progress */
+.progress-wrap { margin-top: 14px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--text2); margin-bottom: 6px; font-weight: 500; }
+.progress-bar-bg { height: 8px; background: var(--bg3); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+.progress-bar-fill { height: 100%; border-radius: 4px; background: var(--green); transition: width 0.35s ease; }
+
+@media (min-width: 640px) {
+  .main { padding: 20px; }
+  .panel-body { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">🐟</div>
+  <div>
+    <h1>คำนวณกำไรเลี้ยงปลา</h1>
+    <p>ระบบ Biofloc · รอบ 4 เดือน</p>
+  </div>
+  <div class="badge" id="headerBadge">ปลาดุก</div>
+</div>
+
+<div class="main">
+
+  <!-- Summary cards -->
+  <div class="stat-grid" id="statGrid"></div>
+
+  <!-- Target / warn -->
+  <div id="targetPanel"></div>
+
+  <!-- Controls -->
+  <div class="panel">
+    <div class="panel-header"><span class="dot"></span>ตั้งค่าตัวแปร</div>
+    <div class="panel-body">
+
+      <div class="fish-toggle">
+        <button class="fish-btn active" id="btn-catfish" onclick="setFish('catfish')">
+          <span class="emoji">🐟</span>ปลาดุก
+        </button>
+        <button class="fish-btn" id="btn-nile" onclick="setFish('nile')">
+          <span class="emoji">🐠</span>ปลานิล
+        </button>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label"><span>ขนาดบ่อ</span><span class="val" id="vVol">1,000 ลิตร</span></div>
+        <input type="range" id="sVol" min="1000" max="10000" step="500" value="1000" oninput="calc()">
+        <div class="range-bounds"><span>1,000 ล.</span><span>10,000 ล.</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label"><span>จำนวนบ่อ</span><span class="val" id="vPonds">2 บ่อ</span></div>
+        <input type="range" id="sPonds" min="1" max="30" step="1" value="2" oninput="calc()">
+        <div class="range-bounds"><span>1 บ่อ</span><span>30 บ่อ</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label"><span>ราคาขายปลา</span><span class="val" id="vSell">55 บาท/กก.</span></div>
+        <input type="range" id="sSell" min="20" max="150" step="5" value="55" oninput="calc()">
+        <div class="range-bounds"><span>20 บ.</span><span>150 บ.</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label"><span>ราคาอาหารปลา</span><span class="val" id="vFeed">35 บาท/กก.</span></div>
+        <input type="range" id="sFeed" min="20" max="60" step="1" value="35" oninput="calc()">
+        <div class="range-bounds"><span>20 บ.</span><span>60 บ.</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label"><span>⚡ กำลังไฟปั๊มลมรวม แนะนำ 1000 ลิตรใช้ 45 W</span><span class="val" id="vWatts">90 วัตต์</span></div>
+        <input type="range" id="sWatts" min="45" max="500" step="45" value="90" oninput="calc()">
+        <div class="range-bounds"><span>45W</span><span>500W</span></div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="slider-group">
+        <div class="slider-label"><span>🎯 เป้ากำไร</span><span class="val" id="vTarget">1,000,000 บาท</span></div>
+        <input type="range" id="sTarget" min="50000" max="5000000" step="50000" value="1000000" oninput="calc()">
+        <div class="range-bounds"><span>50,000</span><span>5,000,000</span></div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span>ความคืบหน้าสู่เป้า</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Cost breakdown -->
+  <div class="panel">
+    <div class="panel-header"><span class="dot"></span>ต้นทุน 1 บ่อ (แยกรายการ)</div>
+    <div class="panel-body" id="costPanel"></div>
+  </div>
+
+  <!-- Table -->
+  <div class="panel">
+    <div class="panel-header"><span class="dot"></span>ตารางเปรียบเทียบตามจำนวนบ่อ</div>
+    <div class="panel-body" style="padding:0;">
+      <div class="table-wrap">
+        <table id="compareTable"></table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const FISH = {
+  catfish: { name:'ปลาดุก', harvestPer1000:40, fishPer1000:94, fcr:1.5, biofoc:0.25, molRatio:0.10, dol1000:6, dolRate:4.4, testKit:1087, probio:550, defaultSell:55 },
+  nile:    { name:'ปลานิล', harvestPer1000:30, fishPer1000:70, fcr:1.5, biofoc:0.25, molRatio:0.10, dol1000:6, dolRate:4.4, testKit:1087, probio:550, defaultSell:60 }
+};
+const ELEC_RATE=4.5, HOURS=24, DAYS=120, MOL_PRICE=50, FING_PRICE=0.80;
+let currentFish='catfish';
+
+function setFish(type){
+  currentFish=type;
+  document.getElementById('btn-catfish').classList.toggle('active',type==='catfish');
+  document.getElementById('btn-nile').classList.toggle('active',type==='nile');
+  document.getElementById('sSell').value=FISH[type].defaultSell;
+  document.getElementById('headerBadge').textContent=FISH[type].name;
+  calc();
+}
+
+function fmt(n,dec=0){ return Number(n).toLocaleString('th-TH',{minimumFractionDigits:dec,maximumFractionDigits:dec}); }
+
+function calcPond(f,vol,feedPrice,watts){
+  const scale=vol/1000;
+  const numFish=Math.round(f.fishPer1000*scale);
+  const harvestKg=f.harvestPer1000*scale;
+  const feedKg=harvestKg*f.fcr*(1-f.biofoc);
+  const fingerling=numFish*FING_PRICE;
+  const feed=feedKg*feedPrice;
+  const molasses=feedKg*f.molRatio*MOL_PRICE;
+  const elec=(watts/1000)*HOURS*DAYS*ELEC_RATE;
+  const dolomite=f.dol1000*scale*f.dolRate;
+  const testKit=f.testKit;
+  const probio=f.probio;
+  const total=fingerling+feed+molasses+elec+dolomite+testKit+probio;
+  return{numFish,harvestKg,feedKg,fingerling,feed,molasses,elec,dolomite,testKit,probio,total};
+}
+
+function calc(){
+  const f=FISH[currentFish];
+  const vol=+document.getElementById('sVol').value;
+  const ponds=+document.getElementById('sPonds').value;
+  const sellPrice=+document.getElementById('sSell').value;
+  const feedPrice=+document.getElementById('sFeed').value;
+  const watts=+document.getElementById('sWatts').value;
+  const target=+document.getElementById('sTarget').value;
+
+  document.getElementById('vVol').textContent=fmt(vol)+' ลิตร';
+  document.getElementById('vPonds').textContent=fmt(ponds)+' บ่อ';
+  document.getElementById('vSell').textContent=fmt(sellPrice)+' บาท/กก.';
+  document.getElementById('vFeed').textContent=fmt(feedPrice)+' บาท/กก.';
+  document.getElementById('vWatts').textContent=fmt(watts)+' วัตต์';
+  document.getElementById('vTarget').textContent=fmt(target)+' บาท';
+
+  const c=calcPond(f,vol,feedPrice,watts);
+  const rev1=c.harvestKg*sellPrice;
+  const profit1=rev1-c.total;
+  const totalProfit=profit1*ponds;
+  const kwhTotal=(watts/1000)*HOURS*DAYS;
+
+  const pct=Math.min(100,Math.max(0,totalProfit/target*100));
+  document.getElementById('progressPct').textContent=fmt(pct,1)+'%';
+  document.getElementById('progressFill').style.width=pct+'%';
+
+  // cost panel
+  const items=[
+    {icon:'🐟',label:`ลูกปลา ${fmt(c.numFish)} ตัว × ${FING_PRICE} บ.`,amt:c.fingerling},
+    {icon:'🌾',label:`อาหาร ${fmt(c.feedKg,1)} กก. × ${fmt(feedPrice)} บ.`,amt:c.feed},
+    {icon:'🍯',label:`กากน้ำตาล ${fmt(c.feedKg*f.molRatio,1)} กก. × ${MOL_PRICE} บ.`,amt:c.molasses},
+    {icon:'⚡',label:`ค่าไฟ ${watts}W × ${DAYS} วัน (${fmt(kwhTotal,1)} หน่วย)`,amt:c.elec},
+    {icon:'🪨',label:`โดโลไมท์ ${fmt(f.dol1000*(vol/1000),1)} กก. × ${f.dolRate} บ.`,amt:c.dolomite},
+    {icon:'🧪',label:'สารตรวจวัดน้ำ',amt:c.testKit},
+    {icon:'🦠',label:'หัวเชื้อจุลินทรีย์',amt:c.probio},
+  ];
+  let cp=items.map(i=>`<div class="cost-row">
+    <span class="cost-label"><span class="icon">${i.icon}</span>${i.label}</span>
+    <span class="cost-amt">${fmt(i.amt,2)}</span>
+  </div>`).join('');
+  cp+=`<div class="cost-row total-row">
+    <span class="cost-label">รวมต้นทุน / บ่อ</span>
+    <span class="cost-amt">${fmt(c.total,2)}</span>
+  </div>`;
+  document.getElementById('costPanel').innerHTML=cp;
+
+  // stat cards
+  const pc=totalProfit>=0?'green':'red';
+  const p1c=profit1>=0?'green':'red';
+  const profitPct1 = c.total > 0 ? (profit1/c.total*100) : 0;
+  const profitPctAll = (c.total*ponds) > 0 ? (totalProfit/(c.total*ponds)*100) : 0;
+  document.getElementById('statGrid').innerHTML=`
+    <div class="stat-card yellow">
+      <div class="stat-label">ผลผลิต / บ่อ</div>
+      <div class="stat-val">${fmt(c.harvestKg,0)}</div>
+      <div class="stat-unit">กิโลกรัม</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-label">รายได้ / บ่อ</div>
+      <div class="stat-val">${fmt(rev1,0)}</div>
+      <div class="stat-unit">บาท</div>
+    </div>
+    <div class="stat-card ${p1c}">
+      <div class="stat-label">กำไร / บ่อ</div>
+      <div class="stat-val">${fmt(profit1,0)}</div>
+      <div class="stat-unit">บาท · <b>${fmt(profitPct1,1)}%</b> ของต้นทุน</div>
+    </div>
+    <div class="stat-card ${pc}">
+      <div class="stat-label">กำไรรวม ${fmt(ponds)} บ่อ</div>
+      <div class="stat-val">${fmt(totalProfit,0)}</div>
+      <div class="stat-unit">บาท · <b>${fmt(profitPctAll,1)}%</b> ของต้นทุน</div>
+    </div>`;
+
+  // target/warn
+  let tpHtml='';
+  if(profit1>0){
+    const np=Math.ceil(target/profit1);
+    tpHtml=`<div class="target-box">
+      <h3>🎯 เพื่อกำไร ${fmt(target)} บาท ต้องการ</h3>
+      <div class="target-grid">
+        <div class="target-item"><div class="t-label">จำนวนบ่อ</div><div class="t-val">${fmt(np)}</div></div>
+        <div class="target-item"><div class="t-label">ปลาทั้งหมด</div><div class="t-val">${fmt(c.numFish*np)}</div></div>
+        <div class="target-item"><div class="t-label">ต้นทุนรวม</div><div class="t-val">${fmt(c.total*np,0)}</div></div>
+      </div>
+    </div>`;
+  } else {
+    const be=Math.ceil(c.total/c.harvestKg);
+    tpHtml=`<div class="warn-box">⚠ ราคาขาย ${fmt(sellPrice)} บาท/กก. ต่ำกว่าต้นทุน<br>ต้องขายอย่างน้อย <strong>${fmt(be)} บาท/กก.</strong> ถึงจะคุ้มทุน</div>`;
+  }
+  document.getElementById('targetPanel').innerHTML=tpHtml;
+
+  // table
+  const pList=[1,2,3,4,5,6,8,10,12,15,20,25,30];
+  let th2=`<thead><tr><th>บ่อ</th><th>ปลา (ตัว)</th><th>ต้นทุน (บาท)</th><th>รายได้ (บาท)</th><th>กำไร (บาท)</th></tr></thead><tbody>`;
+  let rows=pList.map(p=>{
+    const tc=c.total*p,tr2=rev1*p,tp=tr2-tc;
+    const isActive=p===ponds;
+    const hitTarget=tp>=target;
+    const pcls=tp>=0?'profit-pos':'profit-neg';
+    return`<tr class="${isActive?'active-row':''}">
+      <td>${p}</td>
+      <td>${fmt(c.numFish*p)}</td>
+      <td>${fmt(tc,0)}</td>
+      <td>${fmt(tr2,0)}</td>
+      <td class="${isActive?'':pcls}">${fmt(tp,0)}${hitTarget?' <span class="check">✓</span>':''}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('compareTable').innerHTML=th2+rows+'</tbody>';
+}
+
+calc();
+</script>
+</body>
+</html>
