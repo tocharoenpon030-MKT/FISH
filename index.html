@@ -116,15 +116,15 @@ body {
 .panel-body { padding: 16px; }
 
 /* fish toggle */
-.fish-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.fish-toggle { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 18px; }
 .fish-btn {
-  padding: 14px 10px;
+  padding: 12px 4px;
   border-radius: 10px;
   border: 2px solid var(--border);
   background: var(--bg3);
   color: var(--text2);
   font-family: 'Sarabun', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   text-align: center;
@@ -136,7 +136,33 @@ body {
   border-color: var(--green);
   color: var(--green);
 }
-.fish-btn .emoji { font-size: 24px; display: block; margin-bottom: 5px; }
+.fish-btn .emoji { font-size: 22px; display: block; margin-bottom: 4px; }
+
+/* number input fields (typeable) */
+.num-field { margin-bottom: 18px; }
+.num-field-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.num-field-label span.lbl { font-size: 15px; color: var(--text); font-weight: 500; }
+.num-field-label span.hint { font-size: 11px; color: var(--text3); }
+.num-input-wrap { display: flex; align-items: center; gap: 8px; }
+.num-input-wrap input[type=number] {
+  flex: 1;
+  font-family: 'Space Mono', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--bg3);
+  border: 1.5px solid var(--border2);
+  border-radius: 8px;
+  padding: 9px 12px;
+  outline: none;
+  -moz-appearance: textfield;
+}
+.num-input-wrap input[type=number]:focus { border-color: var(--green); background: var(--bg); }
+.num-input-wrap input[type=number]::-webkit-outer-spin-button,
+.num-input-wrap input[type=number]::-webkit-inner-spin-button { opacity: 1; }
+.num-input-wrap .unit { font-size: 13px; color: var(--text2); white-space: nowrap; flex-shrink: 0; }
+.num-input-wrap input[readonly] { background: var(--yellow-bg); border-color: var(--yellow-border); color: var(--yellow); cursor: not-allowed; }
+.auto-note { font-size: 11px; color: var(--text3); margin-top: 5px; line-height: 1.5; }
 
 /* sliders */
 .slider-group { margin-bottom: 18px; }
@@ -315,44 +341,77 @@ tr.active-row td:first-child { color: var(--green) !important; }
         <button class="fish-btn" id="btn-nile" onclick="setFish('nile')">
           <span class="emoji">🐠</span>ปลานิล
         </button>
+        <button class="fish-btn" id="btn-chaon" onclick="setFish('chaon')">
+          <span class="emoji">🐡</span>ปลาชะโอน
+        </button>
       </div>
 
-      <div class="slider-group">
-        <div class="slider-label"><span>ขนาดบ่อ</span><span class="val" id="vVol">1,000 ลิตร</span></div>
-        <input type="range" id="sVol" min="1000" max="10000" step="500" value="1000" oninput="calc()">
-        <div class="range-bounds"><span>1,000 ล.</span><span>10,000 ล.</span></div>
+      <div class="num-field">
+        <div class="num-field-label"><span class="lbl">ขนาดบ่อ</span><span class="hint">ลิตร/บ่อ</span></div>
+        <div class="num-input-wrap">
+          <input type="number" id="sVol" min="500" max="50000" step="100" value="1000" oninput="calc()">
+          <span class="unit">ลิตร</span>
+        </div>
       </div>
 
-      <div class="slider-group">
-        <div class="slider-label"><span>จำนวนบ่อ</span><span class="val" id="vPonds">2 บ่อ</span></div>
-        <input type="range" id="sPonds" min="1" max="30" step="1" value="2" oninput="calc()">
-        <div class="range-bounds"><span>1 บ่อ</span><span>30 บ่อ</span></div>
+      <div class="num-field">
+        <div class="num-field-label"><span class="lbl">จำนวนบ่อ</span><span class="hint">ทั้งหมด</span></div>
+        <div class="num-input-wrap">
+          <input type="number" id="sPonds" min="1" max="200" step="1" value="2" oninput="calc()">
+          <span class="unit">บ่อ</span>
+        </div>
       </div>
 
-      <div class="slider-group">
-        <div class="slider-label"><span>ราคาขายปลา</span><span class="val" id="vSell">55 บาท/กก.</span></div>
-        <input type="range" id="sSell" min="20" max="150" step="5" value="55" oninput="calc()">
-        <div class="range-bounds"><span>20 บ.</span><span>150 บ.</span></div>
+      <div class="num-field">
+        <div class="num-field-label"><span class="lbl">ความหนาแน่น</span><span class="hint">กก. ปลาเมื่อจับ ต่อน้ำ 1,000 ลิตร</span></div>
+        <div class="num-input-wrap">
+          <input type="number" id="sDensity" min="10" max="150" step="1" value="40" oninput="calc()">
+          <span class="unit">กก./1,000 ล.</span>
+        </div>
       </div>
 
-      <div class="slider-group">
-        <div class="slider-label"><span>ราคาอาหารปลา</span><span class="val" id="vFeed">35 บาท/กก.</span></div>
-        <input type="range" id="sFeed" min="20" max="60" step="1" value="35" oninput="calc()">
-        <div class="range-bounds"><span>20 บ.</span><span>60 บ.</span></div>
+      <div class="num-field">
+        <div class="num-field-label"><span class="lbl">🎯 น้ำหนักปลาที่ต้องการเมื่อจับขาย</span><span class="hint">200–1,000 กรัม/ตัว</span></div>
+        <div class="num-input-wrap">
+          <input type="number" id="sTargetWeight" min="200" max="1000" step="10" value="400" oninput="calc()">
+          <span class="unit">กรัม/ตัว</span>
+        </div>
+        <div class="auto-note" id="fingerlingNote"></div>
       </div>
 
-      <div class="slider-group">
-        <div class="slider-label"><span>⚡ กำลังไฟปั๊มลมรวม แนะนำ 1000 ลิตรใช้ 45 W</span><span class="val" id="vWatts">90 วัตต์</span></div>
-        <input type="range" id="sWatts" min="45" max="500" step="45" value="90" oninput="calc()">
-        <div class="range-bounds"><span>45W</span><span>500W</span></div>
+      <div class="num-field">
+        <div class="num-field-label"><span class="lbl">ราคาขายปลา</span><span class="hint">บาท/กก.</span></div>
+        <div class="num-input-wrap">
+          <input type="number" id="sSell" min="20" max="300" step="1" value="55" oninput="calc()">
+          <span class="unit">บาท/กก.</span>
+        </div>
+      </div>
+
+      <div class="num-field">
+        <div class="num-field-label"><span class="lbl">ราคาอาหารปลา</span><span class="hint">บาท/กก.</span></div>
+        <div class="num-input-wrap">
+          <input type="number" id="sFeed" min="10" max="80" step="1" value="35" oninput="calc()">
+          <span class="unit">บาท/กก.</span>
+        </div>
+      </div>
+
+      <div class="num-field">
+        <div class="num-field-label"><span class="lbl">⚡ กำลังไฟปั๊มลมรวมทุกบ่อ</span><span class="hint">คำนวณอัตโนมัติ</span></div>
+        <div class="num-input-wrap">
+          <input type="number" id="sWatts" min="0" step="1" value="90" readonly>
+          <span class="unit">วัตต์</span>
+        </div>
+        <div class="auto-note" id="wattsNote"></div>
       </div>
 
       <hr class="divider">
 
-      <div class="slider-group">
-        <div class="slider-label"><span>🎯 เป้ากำไร</span><span class="val" id="vTarget">1,000,000 บาท</span></div>
-        <input type="range" id="sTarget" min="50000" max="5000000" step="50000" value="1000000" oninput="calc()">
-        <div class="range-bounds"><span>50,000</span><span>5,000,000</span></div>
+      <div class="num-field">
+        <div class="num-field-label"><span class="lbl">🎯 เป้ากำไร</span><span class="hint">บาท</span></div>
+        <div class="num-input-wrap">
+          <input type="number" id="sTarget" min="10000" max="20000000" step="10000" value="1000000" oninput="calc()">
+          <span class="unit">บาท</span>
+        </div>
       </div>
 
       <div class="progress-wrap">
@@ -388,9 +447,11 @@ tr.active-row td:first-child { color: var(--green) !important; }
 
 <script>
 const FISH = {
-  catfish: { name:'ปลาดุก', harvestPer1000:40, fishPer1000:94, fcr:1.5, biofoc:0.25, molRatio:0.10, dol1000:6, dolRate:4.4, testKit:1087, probio:550, defaultSell:55 },
-  nile:    { name:'ปลานิล', harvestPer1000:30, fishPer1000:70, fcr:1.5, biofoc:0.25, molRatio:0.10, dol1000:6, dolRate:4.4, testKit:1087, probio:550, defaultSell:60 }
+  catfish: { name:'ปลาดุก',     fcr:1.5, biofoc:0.25, molRatio:0.10, dol1000:6, dolRate:4.4, testKit:1087, probio:550, defaultSell:55,  defaultDensity:40, wattPerKL:45  },
+  nile:    { name:'ปลานิล',     fcr:1.5, biofoc:0.25, molRatio:0.10, dol1000:6, dolRate:4.4, testKit:1087, probio:550, defaultSell:60,  defaultDensity:30, wattPerKL:45  },
+  chaon:   { name:'ปลาชะโอน',   fcr:1.8, biofoc:0.20, molRatio:0.08, dol1000:6, dolRate:4.4, testKit:1087, probio:550, defaultSell:150, defaultDensity:25, wattPerKL:68  }
 };
+// wattPerKL = วัตต์ปั๊มลมที่แนะนำ ต่อน้ำ 1,000 ลิตร (ปลาชะโอนต้องการออกซิเจนสูงกว่าปลาดุก/ปลานิล จึงตั้งค่าสูงกว่า)
 const ELEC_RATE=4.5, HOURS=24, DAYS=120, MOL_PRICE=50, FING_PRICE=0.80;
 let currentFish='catfish';
 
@@ -398,22 +459,24 @@ function setFish(type){
   currentFish=type;
   document.getElementById('btn-catfish').classList.toggle('active',type==='catfish');
   document.getElementById('btn-nile').classList.toggle('active',type==='nile');
+  document.getElementById('btn-chaon').classList.toggle('active',type==='chaon');
   document.getElementById('sSell').value=FISH[type].defaultSell;
+  document.getElementById('sDensity').value=FISH[type].defaultDensity;
   document.getElementById('headerBadge').textContent=FISH[type].name;
   calc();
 }
 
 function fmt(n,dec=0){ return Number(n).toLocaleString('th-TH',{minimumFractionDigits:dec,maximumFractionDigits:dec}); }
 
-function calcPond(f,vol,feedPrice,watts){
+function calcPond(f,vol,feedPrice,density,targetWeightG,wattsPerPond){
   const scale=vol/1000;
-  const numFish=Math.round(f.fishPer1000*scale);
-  const harvestKg=f.harvestPer1000*scale;
+  const harvestKg=density*scale;
+  const numFish=Math.round((harvestKg*1000)/targetWeightG);
   const feedKg=harvestKg*f.fcr*(1-f.biofoc);
   const fingerling=numFish*FING_PRICE;
   const feed=feedKg*feedPrice;
   const molasses=feedKg*f.molRatio*MOL_PRICE;
-  const elec=(watts/1000)*HOURS*DAYS*ELEC_RATE;
+  const elec=(wattsPerPond/1000)*HOURS*DAYS*ELEC_RATE;
   const dolomite=f.dol1000*scale*f.dolRate;
   const testKit=f.testKit;
   const probio=f.probio;
@@ -425,23 +488,34 @@ function calc(){
   const f=FISH[currentFish];
   const vol=+document.getElementById('sVol').value;
   const ponds=+document.getElementById('sPonds').value;
+  const density=+document.getElementById('sDensity').value;
+  const targetWeightG=+document.getElementById('sTargetWeight').value;
   const sellPrice=+document.getElementById('sSell').value;
   const feedPrice=+document.getElementById('sFeed').value;
-  const watts=+document.getElementById('sWatts').value;
   const target=+document.getElementById('sTarget').value;
 
-  document.getElementById('vVol').textContent=fmt(vol)+' ลิตร';
-  document.getElementById('vPonds').textContent=fmt(ponds)+' บ่อ';
-  document.getElementById('vSell').textContent=fmt(sellPrice)+' บาท/กก.';
-  document.getElementById('vFeed').textContent=fmt(feedPrice)+' บาท/กก.';
-  document.getElementById('vWatts').textContent=fmt(watts)+' วัตต์';
-  document.getElementById('vTarget').textContent=fmt(target)+' บาท';
+  // --- คำนวณกำลังไฟปั๊มลมอัตโนมัติ ---
+  // สูตร: วัตต์/บ่อ = wattPerKL ของชนิดปลา × (ขนาดบ่อ/1000) ; รวมทุกบ่อ = วัตต์/บ่อ × จำนวนบ่อ
+  const wattsPerPond = f.wattPerKL*(vol/1000);
+  const totalWatts = wattsPerPond*ponds;
+  document.getElementById('sWatts').value = Math.round(totalWatts);
+  document.getElementById('wattsNote').innerHTML =
+    `คำนวณจาก ${f.name} ใช้ลม ${f.wattPerKL} วัตต์ ต่อน้ำ 1,000 ลิตร × ${fmt(vol)} ล. × ${ponds} บ่อ
+     = <b>${fmt(wattsPerPond,0)} วัตต์/บ่อ</b> · รวม <b>${fmt(totalWatts,0)} วัตต์</b> ทุกบ่อ
+     (≈ ${fmt(totalWatts/746,2)} แรงม้า — ควรเผื่อกำลังปั๊ม +20-30% เป็นค่าเซฟตี้)`;
+  const watts=totalWatts;
 
-  const c=calcPond(f,vol,feedPrice,watts);
+  document.getElementById('fingerlingNote').innerHTML='';
+
+  const c=calcPond(f,vol,feedPrice,density,targetWeightG,wattsPerPond);
+  document.getElementById('fingerlingNote').innerHTML =
+    `บ่อขนาด ${fmt(vol)} ล. ที่ความหนาแน่น ${fmt(density)} กก./1,000 ล. → ผลผลิต ${fmt(c.harvestKg,1)} กก.
+     ถ้าต้องการจับที่ ${fmt(targetWeightG)} กรัม/ตัว ต้อง <b>ลงลูกปลา ${fmt(c.numFish)} ตัว/บ่อ</b> (ยังไม่หักอัตรารอด)`;
+
   const rev1=c.harvestKg*sellPrice;
   const profit1=rev1-c.total;
   const totalProfit=profit1*ponds;
-  const kwhTotal=(watts/1000)*HOURS*DAYS;
+  const kwhTotal=(wattsPerPond/1000)*HOURS*DAYS;
 
   const pct=Math.min(100,Math.max(0,totalProfit/target*100));
   document.getElementById('progressPct').textContent=fmt(pct,1)+'%';
@@ -452,7 +526,7 @@ function calc(){
     {icon:'🐟',label:`ลูกปลา ${fmt(c.numFish)} ตัว × ${FING_PRICE} บ.`,amt:c.fingerling},
     {icon:'🌾',label:`อาหาร ${fmt(c.feedKg,1)} กก. × ${fmt(feedPrice)} บ.`,amt:c.feed},
     {icon:'🍯',label:`กากน้ำตาล ${fmt(c.feedKg*f.molRatio,1)} กก. × ${MOL_PRICE} บ.`,amt:c.molasses},
-    {icon:'⚡',label:`ค่าไฟ ${watts}W × ${DAYS} วัน (${fmt(kwhTotal,1)} หน่วย)`,amt:c.elec},
+    {icon:'⚡',label:`ค่าไฟปั๊มลม ${fmt(wattsPerPond,0)}W/บ่อ × ${DAYS} วัน (${fmt(kwhTotal,1)} หน่วย)`,amt:c.elec},
     {icon:'🪨',label:`โดโลไมท์ ${fmt(f.dol1000*(vol/1000),1)} กก. × ${f.dolRate} บ.`,amt:c.dolomite},
     {icon:'🧪',label:'สารตรวจวัดน้ำ',amt:c.testKit},
     {icon:'🦠',label:'หัวเชื้อจุลินทรีย์',amt:c.probio},
@@ -473,6 +547,11 @@ function calc(){
   const profitPct1 = c.total > 0 ? (profit1/c.total*100) : 0;
   const profitPctAll = (c.total*ponds) > 0 ? (totalProfit/(c.total*ponds)*100) : 0;
   document.getElementById('statGrid').innerHTML=`
+    <div class="stat-card">
+      <div class="stat-label">⚡ ปั๊มลมที่ต้องใช้ (รวมทุกบ่อ)</div>
+      <div class="stat-val">${fmt(watts,0)}</div>
+      <div class="stat-unit">วัตต์ · ${fmt(watts/746,2)} แรงม้า</div>
+    </div>
     <div class="stat-card yellow">
       <div class="stat-label">ผลผลิต / บ่อ</div>
       <div class="stat-val">${fmt(c.harvestKg,0)}</div>
