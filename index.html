@@ -357,7 +357,7 @@ tr.active-row td:first-child { color: var(--green) !important; }
       <div class="num-field">
         <div class="num-field-label"><span class="lbl">จำนวนบ่อ</span><span class="hint">ทั้งหมด</span></div>
         <div class="num-input-wrap">
-          <input type="number" id="sPonds" min="1" max="200" step="1" value="2" oninput="calc()">
+          <input type="number" id="sPonds" min="1" max="200" step="1" value="4" oninput="calc()">
           <span class="unit">บ่อ</span>
         </div>
       </div>
@@ -396,12 +396,69 @@ tr.active-row td:first-child { color: var(--green) !important; }
       </div>
 
       <div class="num-field">
-        <div class="num-field-label"><span class="lbl">⚡ กำลังไฟปั๊มลมรวมทุกบ่อ</span><span class="hint">คำนวณอัตโนมัติ</span></div>
+        <div class="num-field-label"><span class="lbl">🐟 ราคาลูกปลา</span><span class="hint">บาท/ตัว</span></div>
         <div class="num-input-wrap">
-          <input type="number" id="sWatts" min="0" step="1" value="90" readonly>
-          <span class="unit">วัตต์</span>
+          <input type="number" id="sFingerPrice" min="0" max="50" step="0.1" value="0.8" oninput="calc()">
+          <span class="unit">บาท/ตัว</span>
         </div>
-        <div class="auto-note" id="wattsNote"></div>
+      </div>
+
+      <div class="num-field">
+        <div class="num-field-label"><span class="lbl">🍯 ราคากากน้ำตาล</span><span class="hint">ปริมาณคำนวณอัตโนมัติ</span></div>
+        <div class="num-input-wrap">
+          <input type="number" id="sMolPrice" min="0" max="100" step="1" value="50" oninput="calc()">
+          <span class="unit">บาท/กก.</span>
+        </div>
+      </div>
+
+      <div class="num-field">
+        <div class="num-field-label"><span class="lbl">🪨 ราคาโดโลไมท์</span><span class="hint">ปริมาณคำนวณอัตโนมัติ</span></div>
+        <div class="num-input-wrap">
+          <input type="number" id="sDolPrice" min="0" max="50" step="0.1" value="4.4" oninput="calc()">
+          <span class="unit">บาท/กก.</span>
+        </div>
+      </div>
+
+      <div class="num-field">
+        <div class="num-field-label"><span class="lbl">🧪 สารตรวจวัดน้ำ</span><span class="hint">ราคาต่อบ่อ พิมพ์เอง</span></div>
+        <div class="num-input-wrap">
+          <input type="number" id="sTestKit" min="0" max="20000" step="1" value="1087" oninput="calc()">
+          <span class="unit">บาท/บ่อ</span>
+        </div>
+      </div>
+
+      <div class="num-field">
+        <div class="num-field-label"><span class="lbl">🦠 หัวเชื้อจุลินทรีย์</span><span class="hint">ราคาต่อบ่อ พิมพ์เอง</span></div>
+        <div class="num-input-wrap">
+          <input type="number" id="sProbio" min="0" max="20000" step="1" value="550" oninput="calc()">
+          <span class="unit">บาท/บ่อ</span>
+        </div>
+      </div>
+
+      <div class="num-field">
+        <div class="num-field-label"><span class="lbl">⚡ ลมที่ต้องใช้ (แนะนำ)</span><span class="hint">คำนวณอัตโนมัติ</span></div>
+        <div class="num-input-wrap">
+          <input type="number" id="sLpmPerKL" min="10" max="100" step="1" value="35" oninput="calc()">
+          <span class="unit">ลิตร/นาที ต่อน้ำ 1,000 ล.</span>
+        </div>
+        <div class="auto-note">ปรับตัวเลขนี้ได้ — ค่าเริ่มต้นอิงแนวทางทั่วไปสำหรับ biofloc ความหนาแน่นสูง (ไม่ใช่สเปกตายตัว) ปลาที่ต้องการออกซิเจนสูง (เช่นชะโอน) ควรปรับขึ้นเป็น 50-60</div>
+      </div>
+
+      <div class="num-field">
+        <div class="num-field-label"><span class="lbl">ปั๊มลมที่มีอยู่/จะซื้อ</span><span class="hint">ดูสเปกข้างปั๊ม</span></div>
+        <div class="num-input-wrap">
+          <input type="number" id="sPumpLpm" min="0" max="2000" step="1" value="140" oninput="calc()">
+          <span class="unit">ลิตร/นาที ต่อตัว</span>
+        </div>
+        <div class="num-input-wrap" style="margin-top:8px;">
+          <input type="number" id="sPumpWatts" min="0" max="3000" step="1" value="100" oninput="calc()">
+          <span class="unit">วัตต์ ต่อตัว</span>
+        </div>
+        <div class="num-input-wrap" style="margin-top:8px;">
+          <input type="number" id="sPumpUnits" min="1" max="50" step="1" value="1" oninput="calc()">
+          <span class="unit">ตัว (ใช้เลี้ยงร่วมกันทุกบ่อที่ตั้งไว้)</span>
+        </div>
+        <div class="auto-note" id="pumpVerdict"></div>
       </div>
 
       <hr class="divider">
@@ -468,18 +525,18 @@ function setFish(type){
 
 function fmt(n,dec=0){ return Number(n).toLocaleString('th-TH',{minimumFractionDigits:dec,maximumFractionDigits:dec}); }
 
-function calcPond(f,vol,feedPrice,density,targetWeightG,wattsPerPond){
+function calcPond(f,vol,feedPrice,density,targetWeightG,wattsPerPond,fingerPrice,molPrice,dolPrice,testKitPrice,probioPrice){
   const scale=vol/1000;
   const harvestKg=density*scale;
   const numFish=Math.round((harvestKg*1000)/targetWeightG);
   const feedKg=harvestKg*f.fcr*(1-f.biofoc);
-  const fingerling=numFish*FING_PRICE;
+  const fingerling=numFish*fingerPrice;
   const feed=feedKg*feedPrice;
-  const molasses=feedKg*f.molRatio*MOL_PRICE;
+  const molasses=feedKg*f.molRatio*molPrice;
   const elec=(wattsPerPond/1000)*HOURS*DAYS*ELEC_RATE;
-  const dolomite=f.dol1000*scale*f.dolRate;
-  const testKit=f.testKit;
-  const probio=f.probio;
+  const dolomite=f.dol1000*scale*dolPrice;
+  const testKit=testKitPrice;
+  const probio=probioPrice;
   const total=fingerling+feed+molasses+elec+dolomite+testKit+probio;
   return{numFish,harvestKg,feedKg,fingerling,feed,molasses,elec,dolomite,testKit,probio,total};
 }
@@ -494,20 +551,39 @@ function calc(){
   const feedPrice=+document.getElementById('sFeed').value;
   const target=+document.getElementById('sTarget').value;
 
-  // --- คำนวณกำลังไฟปั๊มลมอัตโนมัติ ---
-  // สูตร: วัตต์/บ่อ = wattPerKL ของชนิดปลา × (ขนาดบ่อ/1000) ; รวมทุกบ่อ = วัตต์/บ่อ × จำนวนบ่อ
-  const wattsPerPond = f.wattPerKL*(vol/1000);
-  const totalWatts = wattsPerPond*ponds;
-  document.getElementById('sWatts').value = Math.round(totalWatts);
-  document.getElementById('wattsNote').innerHTML =
-    `คำนวณจาก ${f.name} ใช้ลม ${f.wattPerKL} วัตต์ ต่อน้ำ 1,000 ลิตร × ${fmt(vol)} ล. × ${ponds} บ่อ
-     = <b>${fmt(wattsPerPond,0)} วัตต์/บ่อ</b> · รวม <b>${fmt(totalWatts,0)} วัตต์</b> ทุกบ่อ
-     (≈ ${fmt(totalWatts/746,2)} แรงม้า — ควรเผื่อกำลังปั๊ม +20-30% เป็นค่าเซฟตี้)`;
+  // --- คำนวณความต้องการลมเทียบกับปั๊มที่มี ---
+  const lpmPerKL=+document.getElementById('sLpmPerKL').value;
+  const pumpLpm=+document.getElementById('sPumpLpm').value;
+  const pumpWatts=+document.getElementById('sPumpWatts').value;
+  const pumpUnits=+document.getElementById('sPumpUnits').value;
+
+  const requiredLpm = lpmPerKL*(vol/1000)*ponds;
+  const availableLpm = pumpLpm*pumpUnits;
+  const totalWatts = pumpWatts*pumpUnits;
+  const wattsPerPond = totalWatts/ponds;
   const watts=totalWatts;
+
+  let verdictHtml='';
+  if(requiredLpm<=0){
+    verdictHtml='';
+  } else if(availableLpm>=requiredLpm){
+    const margin=((availableLpm/requiredLpm-1)*100);
+    verdictHtml=`<span style="color:var(--green);font-weight:700;">✓ พอ</span> — ต้องการ ${fmt(requiredLpm,0)} L/min มีให้ ${fmt(availableLpm,0)} L/min (เกิน ${fmt(margin,0)}%)`;
+  } else {
+    const short=requiredLpm-availableLpm;
+    verdictHtml=`<span style="color:var(--red);font-weight:700;">⚠ ไม่พอ</span> — ต้องการ ${fmt(requiredLpm,0)} L/min มีให้ ${fmt(availableLpm,0)} L/min (ขาด ${fmt(short,0)} L/min) ควรเพิ่มปั๊มหรือลดจำนวนบ่อ/ถังต่อปั๊ม`;
+  }
+  document.getElementById('pumpVerdict').innerHTML=verdictHtml;
 
   document.getElementById('fingerlingNote').innerHTML='';
 
-  const c=calcPond(f,vol,feedPrice,density,targetWeightG,wattsPerPond);
+  const fingerPrice=+document.getElementById('sFingerPrice').value;
+  const molPrice=+document.getElementById('sMolPrice').value;
+  const dolPrice=+document.getElementById('sDolPrice').value;
+  const testKitPrice=+document.getElementById('sTestKit').value;
+  const probioPrice=+document.getElementById('sProbio').value;
+
+  const c=calcPond(f,vol,feedPrice,density,targetWeightG,wattsPerPond,fingerPrice,molPrice,dolPrice,testKitPrice,probioPrice);
   document.getElementById('fingerlingNote').innerHTML =
     `บ่อขนาด ${fmt(vol)} ล. ที่ความหนาแน่น ${fmt(density)} กก./1,000 ล. → ผลผลิต ${fmt(c.harvestKg,1)} กก.
      ถ้าต้องการจับที่ ${fmt(targetWeightG)} กรัม/ตัว ต้อง <b>ลงลูกปลา ${fmt(c.numFish)} ตัว/บ่อ</b> (ยังไม่หักอัตรารอด)`;
@@ -523,11 +599,11 @@ function calc(){
 
   // cost panel
   const items=[
-    {icon:'🐟',label:`ลูกปลา ${fmt(c.numFish)} ตัว × ${FING_PRICE} บ.`,amt:c.fingerling},
+    {icon:'🐟',label:`ลูกปลา ${fmt(c.numFish)} ตัว × ${fmt(fingerPrice,2)} บ.`,amt:c.fingerling},
     {icon:'🌾',label:`อาหาร ${fmt(c.feedKg,1)} กก. × ${fmt(feedPrice)} บ.`,amt:c.feed},
-    {icon:'🍯',label:`กากน้ำตาล ${fmt(c.feedKg*f.molRatio,1)} กก. × ${MOL_PRICE} บ.`,amt:c.molasses},
+    {icon:'🍯',label:`กากน้ำตาล ${fmt(c.feedKg*f.molRatio,1)} กก. × ${fmt(molPrice)} บ.`,amt:c.molasses},
     {icon:'⚡',label:`ค่าไฟปั๊มลม ${fmt(wattsPerPond,0)}W/บ่อ × ${DAYS} วัน (${fmt(kwhTotal,1)} หน่วย)`,amt:c.elec},
-    {icon:'🪨',label:`โดโลไมท์ ${fmt(f.dol1000*(vol/1000),1)} กก. × ${f.dolRate} บ.`,amt:c.dolomite},
+    {icon:'🪨',label:`โดโลไมท์ ${fmt(f.dol1000*(vol/1000),1)} กก. × ${fmt(dolPrice,2)} บ.`,amt:c.dolomite},
     {icon:'🧪',label:'สารตรวจวัดน้ำ',amt:c.testKit},
     {icon:'🦠',label:'หัวเชื้อจุลินทรีย์',amt:c.probio},
   ];
